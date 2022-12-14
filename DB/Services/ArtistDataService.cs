@@ -8,10 +8,16 @@ using DB.Models;
 
 namespace DB.Services
 {
-    public class ArtistDataService : BaseDataService<Artist>
+    public class ArtistDataService : DataServiceBase<Artist>
     {
         public ArtistDataService(AppDbContext appContext) : base(appContext)
         {
+        }
+
+        public override IEnumerable<string> GetAllVisible()
+        {
+            var res = _db.Artists.Select(a => a.ArtistName).ToList();
+            return res;
         }
 
         public override IEnumerable<Artist> GetAll()
@@ -20,11 +26,10 @@ namespace DB.Services
             return res;
         }
 
-        public override Artist Create(Artist entity)
+        public override void Create(IModel entity)
         {
-            var res = _db.Artists.Add(entity);
+            var res = _db.Artists.Add((Artist)entity);
             _db.SaveChanges();
-            return res.Entity;
         }
 
         public override Artist Read(int id)
@@ -32,18 +37,16 @@ namespace DB.Services
             return _db.Artists.Find(id);
         }
 
-        public override Artist Update(Artist entity)
+        public override void Update(IModel entity)
         {
-            _db.Artists.Update(entity);
+            _db.Artists.Update((Artist)entity);
             _db.SaveChanges();
-            return entity;
         }
 
-        public override bool Delete(Artist entity)
+        public override void Delete(IModel entity)
         {
-            _db.Artists.Remove(entity);
+            _db.Artists.Remove((Artist)entity);
             _db.SaveChanges();
-            return true;
         }
     }
 }

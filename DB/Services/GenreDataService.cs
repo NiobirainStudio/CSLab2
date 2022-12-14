@@ -8,10 +8,16 @@ using DB.Models;
 
 namespace DB.Services
 {
-    public class GenreDataService : BaseDataService<Genre>
+    public class GenreDataService : DataServiceBase<Genre>
     {
         public GenreDataService(AppDbContext appContext) : base(appContext)
         {
+        }
+
+        public override IEnumerable<string> GetAllVisible()
+        {
+            var res = _db.Genres.Select(a => a.GenreName).ToList();
+            return res;
         }
 
         public override IEnumerable<Genre> GetAll()
@@ -20,30 +26,27 @@ namespace DB.Services
             return res;
         }
 
-        public override Genre Create(Genre entity)
+        public override void Create(IModel entity)
         {
-            var res = _db.Genres.Add(entity);
+            var res = _db.Genres.Add((Genre)entity);
             _db.SaveChanges();
-            return res.Entity;
         }
 
-        public override Genre Read(int id)
+        public override IModel Read(int id)
         {
             return _db.Genres.Find(id);
         }
 
-        public override Genre Update(Genre entity)
+        public override void Update(IModel entity)
         {
-            _db.Genres.Update(entity);
+            _db.Genres.Update((Genre)entity);
             _db.SaveChanges();
-            return entity;
         }
 
-        public override bool Delete(Genre entity)
+        public override void Delete(IModel entity)
         {
-            _db.Genres.Remove(entity);
+            _db.Genres.Remove((Genre)entity);
             _db.SaveChanges();
-            return true;
         }
     }
 }

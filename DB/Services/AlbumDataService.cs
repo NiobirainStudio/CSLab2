@@ -8,10 +8,16 @@ using DB.Models;
 
 namespace DB.Services
 {
-    public class AlbumDataService : BaseDataService<Album>
+    public class AlbumDataService : DataServiceBase<Album>
     {
         public AlbumDataService(AppDbContext appContext) : base(appContext)
         {
+        }
+
+        public override IEnumerable<string> GetAllVisible()
+        {
+            var res = _db.Albums.Select(a => a.AlbumName).ToList();
+            return res;
         }
 
         public override IEnumerable<Album> GetAll()
@@ -20,30 +26,27 @@ namespace DB.Services
             return res;
         }
 
-        public override Album Create(Album entity)
+        public override void Create(IModel entity)
         {
-            var res = _db.Albums.Add(entity);
+            var res = _db.Albums.Add((Album)entity);
             _db.SaveChanges();
-            return res.Entity;
         }
 
-        public override Album Read(int id)
+        public override IModel Read(int id)
         {
             return _db.Albums.Find(id);
         }
 
-        public override Album Update(Album entity)
+        public override void Update(IModel entity)
         {
-            _db.Albums.Update(entity);
+            _db.Albums.Update((Album)entity);
             _db.SaveChanges();
-            return entity;
         }
 
-        public override bool Delete(Album entity)
+        public override void Delete(IModel entity)
         {
-            _db.Albums.Remove(entity);
+            _db.Albums.Remove((Album)entity);
             _db.SaveChanges();
-            return true;
         }
     }
 }

@@ -12,8 +12,7 @@ namespace DB.Models
         public string AlbumName { get; set; }
         [Required]
         public int ReleaseYear { get; set; }
-        
-        
+
         [Required]
         public int ArtistId { get; set; } // External key
         [Required]
