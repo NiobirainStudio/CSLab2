@@ -14,12 +14,17 @@ namespace DB.Services
         protected Type mainType;
         public Dictionary<string, Type> typesInfo { get; } = new Dictionary<string, Type>();
 
-        public abstract IEnumerable<object> GetAllVisible();
-        public abstract IEnumerable<IModel> GetAll();
-        public abstract void Create(IModel entity);
-        public abstract IModel Read(int id);
-        public abstract void Update(IModel entity);
-        public abstract void Delete(IModel entity);
+        protected abstract object TransformById(object[] entity);
+        protected abstract object Transform(object[] entity);
+
+        public abstract IEnumerable<string> GetAllVisible();
+        public abstract IEnumerable<object> GetAll();
+        public abstract int GetIdByVisible(string data);
+
+        public abstract void Create(object[] entity);
+        public abstract object? Read(int id);
+        public abstract void Update(object[] entity);
+        public abstract void Delete(int id);
     }
 
     public abstract class DataServiceBase<T> : DataServiceBase where T : IModel

@@ -41,6 +41,9 @@ namespace DB
             // For each model space service
             foreach (var item in modelSpace)
             {
+                var id = item.Value.dataService.typesInfo.First();
+                item.Value.variables.Add(id.Key, id.Value);
+
                 // For each variable in the data service
                 foreach (var ti in item.Value.dataService.typesInfo)
                 {
@@ -60,11 +63,12 @@ namespace DB
                             // External reference exists!
                             item.Value.externalKeys.Add(ti.Key, ti.Value);
                         }
-                    } else if (
-                        // Select the first variables of all models and check if the current variable is not one of them
-                        modelSpace.Values.Select(t => t.dataService.typesInfo.FirstOrDefault())
-                        .Where(t => t.Key == ti.Key && t.Value == ti.Value)
-                        .Count() == 0)
+                    }
+                    else // Select the first variables of all models and check if the current variable is not one of them
+                        if (modelSpace.Values
+                            .Select(t => t.dataService.typesInfo.FirstOrDefault())
+                            .Where(t => t.Key == ti.Key && t.Value == ti.Value)
+                            .Count() == 0)
                     {
                         item.Value.variables.Add(ti.Key, ti.Value);
                     }

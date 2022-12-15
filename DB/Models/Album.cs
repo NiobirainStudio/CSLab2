@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DB.Models
@@ -14,14 +13,19 @@ namespace DB.Models
         public int ReleaseYear { get; set; }
 
         [Required]
-        public int ArtistId { get; set; } // External key
+        public int ArtistId { get; set; }  // External key
         [Required]
         public Artist Artist { get; set; } // Navigation property
 
 
         [Required]
-        public int GenreId { get; set; }
+        public int GenreId { get; set; }   // External key
         [Required]
-        public Genre Genre { get; set; }
+        public Genre Genre { get; set; }   // Navigation property
+
+        public string GetVisible()
+        {
+            return AlbumName;
+        }
     }
 }

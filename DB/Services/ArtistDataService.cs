@@ -14,9 +14,19 @@ namespace DB.Services
         {
         }
 
+        protected override object TransformById(object[] entity)
+        {
+            return new Artist { ArtistId = (int)entity[0], ArtistName = (string)entity[1] };
+        }
+
+        protected override object Transform(object[] entity)
+        {
+            return new Artist { ArtistName = (string)entity[0] };
+        }
+
         public override IEnumerable<string> GetAllVisible()
         {
-            var res = _db.Artists.Select(a => a.ArtistName).ToList();
+            var res = _db.Artists.Select(x => x.ArtistName).ToList();
             return res;
         }
 
@@ -26,27 +36,49 @@ namespace DB.Services
             return res;
         }
 
-        public override void Create(IModel entity)
+        public override int GetIdByVisible(string data)
         {
-            var res = _db.Artists.Add((Artist)entity);
+            var res = _db.Artists.FirstOrDefault(x => x.ArtistName == data);
+            return res.ArtistId;
+        }
+
+
+
+        public override void Create(object[] entity)
+        {
+            var res = _db.Artists.Add((Artist)Transform(entity));
             _db.SaveChanges();
         }
 
-        public override Artist Read(int id)
+        public override object? Read(int id)
         {
             return _db.Artists.Find(id);
         }
 
-        public override void Update(IModel entity)
+        public override void Update(object[] entity)
         {
-            _db.Artists.Update((Artist)entity);
-            _db.SaveChanges();
+            var transformed = (Artist)TransformById(entity);
+
+            var toUpdate = _db.Artists.FirstOrDefault(x => x.ArtistId == transformed.ArtistId);
+
+            if (toUpdate != null)
+            {
+                toUpdate.ArtistName = transformed.ArtistName;
+
+                _db.Artists.Update(toUpdate);
+                _db.SaveChanges();
+            }
         }
 
-        public override void Delete(IModel entity)
+        public override void Delete(int id)
         {
-            _db.Artists.Remove((Artist)entity);
-            _db.SaveChanges();
+            var toDelete = _db.Artists.FirstOrDefault(x => x.ArtistId == id);
+
+            if (toDelete != null)
+            {
+                _db.Artists.Remove(toDelete);
+                _db.SaveChanges();
+            }
         }
     }
 }

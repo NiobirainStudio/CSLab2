@@ -14,9 +14,19 @@ namespace DB.Services
         {
         }
 
+        protected override object TransformById(object[] entity)
+        {
+            return new Genre { GenreId = (int)entity[0], GenreName = (string)entity[1] };
+        }
+
+        protected override object Transform(object[] entity)
+        {
+            return new Genre { GenreName = (string)entity[0] };
+        }
+
         public override IEnumerable<string> GetAllVisible()
         {
-            var res = _db.Genres.Select(a => a.GenreName).ToList();
+            var res = _db.Genres.Select(x => x.GenreName).ToList();
             return res;
         }
 
@@ -26,27 +36,49 @@ namespace DB.Services
             return res;
         }
 
-        public override void Create(IModel entity)
+        public override int GetIdByVisible(string data)
         {
-            var res = _db.Genres.Add((Genre)entity);
+            var res = _db.Genres.FirstOrDefault(x => x.GenreName == data);
+            return res.GenreId;
+        }
+
+
+
+        public override void Create(object[] entity)
+        {
+            var res = _db.Genres.Add((Genre)Transform(entity));
             _db.SaveChanges();
         }
 
-        public override IModel Read(int id)
+        public override object? Read(int id)
         {
             return _db.Genres.Find(id);
         }
 
-        public override void Update(IModel entity)
+        public override void Update(object[] entity)
         {
-            _db.Genres.Update((Genre)entity);
-            _db.SaveChanges();
+            var transformed = (Genre)TransformById(entity);
+
+            var toUpdate = _db.Genres.FirstOrDefault(x => x.GenreId == transformed.GenreId);
+
+            if (toUpdate != null)
+            {
+                toUpdate.GenreName = transformed.GenreName;
+
+                _db.Genres.Update(toUpdate);
+                _db.SaveChanges();
+            }
         }
 
-        public override void Delete(IModel entity)
+        public override void Delete(int id)
         {
-            _db.Genres.Remove((Genre)entity);
-            _db.SaveChanges();
+            var toDelete = _db.Genres.FirstOrDefault(x => x.GenreId == id);
+
+            if (toDelete != null)
+            {
+                _db.Genres.Remove(toDelete);
+                _db.SaveChanges();
+            }
         }
     }
 }

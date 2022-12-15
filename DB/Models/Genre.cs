@@ -9,5 +9,10 @@ namespace DB.Models
         public int GenreId { get; set; }
         [Required]
         public string GenreName { get; set; }
+
+        public string GetVisible()
+        {
+            return GenreName;
+        }
     }
 }

@@ -9,5 +9,10 @@ namespace DB.Models
         public int ArtistId { get; set; }
         [Required]
         public string ArtistName { get; set; }
+
+        public string GetVisible()
+        {
+            return ArtistName;
+        }
     }
 }
