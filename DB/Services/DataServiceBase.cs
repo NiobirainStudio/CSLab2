@@ -11,7 +11,6 @@ namespace DB.Services
     public abstract class DataServiceBase
     {
         protected AppDbContext _db;
-        protected Type mainType;
         public Dictionary<string, Type> typesInfo { get; } = new Dictionary<string, Type>();
 
         protected abstract object TransformById(object[] entity);
@@ -31,7 +30,6 @@ namespace DB.Services
     {
         public DataServiceBase(AppDbContext appContext) { 
             _db = appContext;
-            mainType = typeof(T);
 
             foreach (PropertyInfo prop in typeof(T).GetProperties())
                 typesInfo.Add(prop.Name, prop.PropertyType);

@@ -73,6 +73,40 @@ namespace GUI
             return Convert.ToInt32(selectedItem.GetType().GetProperties().FirstOrDefault().GetValue(selectedItem));
         }
 
+        private List<object> GatherInput()
+        {
+            List<object> inputData = new List<object>();
+
+            foreach (var item in _variableList)
+            {
+                if (item.Value.Text != "")
+                {
+                    inputData.Add(item.Value.Text);
+                }
+                else
+                {
+                    MessageBox.Show($"{item.Key} cannot be empty!", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return new List<object>();
+                }
+            }
+
+            foreach (var item in _externalKeyList)
+            {
+                if (item.Value.SelectedItem != null)
+                {
+                    inputData.Add(_serviceManager.modelSpace[item.Key].dataService.GetIdByVisible((string)item.Value.SelectedItem));
+                }
+                else
+                {
+                    MessageBox.Show($"Please select the {item.Key.Name}!", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return new List<object>();
+                }
+            }
+            return inputData;
+        }
+
+
+
 
 
 
@@ -191,12 +225,9 @@ namespace GUI
             // Selected data
             if (DataOut.SelectedItem != null)
             {
-                var selectedId = IdOfSelected();
-
-                var element = _serviceManager.modelSpace
-                    .ElementAt(TableSelect.SelectedIndex).Value.dataService;
-
-                var requestedData = element.Read(selectedId);
+                var requestedData = _serviceManager.modelSpace
+                    .ElementAt(TableSelect.SelectedIndex).Value.dataService
+                    .Read(IdOfSelected());
 
                 // Insert data of the selected item into the input fields
                 foreach (var item in _variableList)
@@ -216,8 +247,6 @@ namespace GUI
                     {
                         if (prop.PropertyType == item.Key)
                         {
-                            //item.Value.SelectedItem = Convert.ToString(prop.GetValue(requestedData));
-
                             item.Value.SelectedItem = ((IModel)prop.GetValue(requestedData)).GetVisible();
                         }
                     }
@@ -232,38 +261,6 @@ namespace GUI
 
 
         // CRUD FUNCTIONALITY
-        private List<object> GatherInput()
-        {
-            List<object> inputData = new List<object>();
-
-            foreach (var item in _variableList)
-            {
-                if (item.Value.Text != "")
-                {
-                    inputData.Add(item.Value.Text);
-                }
-                else
-                {
-                    MessageBox.Show($"{item.Key} cannot be empty!", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return new List<object>();
-                }
-            }
-
-            foreach (var item in _externalKeyList)
-            {
-                if (item.Value.SelectedItem != null)
-                {
-                    inputData.Add(_serviceManager.modelSpace[item.Key].dataService.GetIdByVisible((string)item.Value.SelectedItem));
-                }
-                else
-                {
-                    MessageBox.Show($"Please select the {item.Key.Name}!", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return new List<object>();
-                }
-            }
-            return inputData;
-        }
-
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
             List<object> res = GatherInput();

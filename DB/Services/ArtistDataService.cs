@@ -26,7 +26,7 @@ namespace DB.Services
 
         public override IEnumerable<string> GetAllVisible()
         {
-            var res = _db.Artists.Select(x => x.ArtistName).ToList();
+            var res = _db.Artists.Select(x => x.GetVisible()).ToList();
             return res;
         }
 

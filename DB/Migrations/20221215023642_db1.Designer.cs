@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DB.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221201054448_Init")]
-    partial class Init
+    [Migration("20221215023642_db1")]
+    partial class db1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace DB.Migrations
 
                     b.Property<string>("AlbumName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
@@ -51,7 +51,13 @@ namespace DB.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("Albums");
+                    b.HasIndex("AlbumName", "ReleaseYear", "ArtistId", "GenreId")
+                        .IsUnique();
+
+                    b.ToTable("Albums", t =>
+                        {
+                            t.HasCheckConstraint("CK_Albums_AlbumName", "LEN([AlbumName]) > 0");
+                        });
                 });
 
             modelBuilder.Entity("DB.Models.Artist", b =>
@@ -64,11 +70,17 @@ namespace DB.Migrations
 
                     b.Property<string>("ArtistName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ArtistId");
 
-                    b.ToTable("Artists");
+                    b.HasIndex("ArtistName")
+                        .IsUnique();
+
+                    b.ToTable("Artists", t =>
+                        {
+                            t.HasCheckConstraint("CK_Artists_ArtistName", "LEN([ArtistName]) > 0");
+                        });
                 });
 
             modelBuilder.Entity("DB.Models.Genre", b =>
@@ -81,11 +93,17 @@ namespace DB.Migrations
 
                     b.Property<string>("GenreName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("GenreId");
 
-                    b.ToTable("Genres");
+                    b.HasIndex("GenreName")
+                        .IsUnique();
+
+                    b.ToTable("Genres", t =>
+                        {
+                            t.HasCheckConstraint("CK_Genres_GenreName", "LEN([GenreName]) > 0");
+                        });
                 });
 
             modelBuilder.Entity("DB.Models.Album", b =>

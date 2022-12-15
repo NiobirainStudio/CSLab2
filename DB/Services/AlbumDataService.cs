@@ -45,7 +45,7 @@ namespace DB.Services
 
         public override IEnumerable<string> GetAllVisible()
         {
-            var res = _db.Albums.Select(x => x.AlbumName).ToList();
+            var res = _db.Albums.Select(x => x.GetVisible()).ToList();
             return res;
         }
 
@@ -83,7 +83,11 @@ namespace DB.Services
 
         public override object? Read(int id)
         {
-            return _db.Albums.Find(id);
+            //_db.Albums.Find(id);
+
+            return (from albs in _db.Albums
+                where albs.AlbumId == id
+                select albs).FirstOrDefault();
         }
 
         public override void Update(object[] entity)

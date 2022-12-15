@@ -34,7 +34,7 @@ namespace DB
 
 
             modelBuilder.Entity<Album>()
-                .HasIndex(p => new { p.AlbumName, p.ReleaseYear, p.ArtistId, p.GenreId }).IsUnique();
+                .HasIndex(p => new { p.AlbumName }).IsUnique();
 
             modelBuilder.Entity<Album>()
                 .HasCheckConstraint("CK_Albums_AlbumName", "LEN([AlbumName]) > 0");

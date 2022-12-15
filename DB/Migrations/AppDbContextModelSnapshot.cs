@@ -42,9 +42,6 @@ namespace DB.Migrations
                     b.Property<int>("ReleaseYear")
                         .HasColumnType("int");
 
-                    b.Property<float>("Score")
-                        .HasColumnType("real");
-
                     b.HasKey("AlbumId");
 
                     b.HasIndex("ArtistId");
